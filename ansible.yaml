@@ -11,7 +11,7 @@
         name:
           - vim
           - git
-        state: lates
+        state: latest
     - name: Install Python3
       yum:
         name:
