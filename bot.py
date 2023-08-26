@@ -1,6 +1,4 @@
 #! /usr/bin/env python
-# -*- coding: utf-8 -*-
-
 import telebot;
 bot = telebot.TeleBot(os.environ["BOTKEY"])
 bot.polling(none_stop=True, interval=0)
