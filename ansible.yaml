@@ -29,8 +29,9 @@
           - nginx
           - mysql 
       become: true
-    - name: download sources
-      get_url: url="https://www.python.org/ftp/python/3.9.5/Python-3.9.5.tgz"
+    - name: Register Contents of PGDATA Folder
+      shell: ls /var/lib/postgresql/11/main
+      register: pg_contents
     # - name: download sources
     #   shell:
     #     - echo "asd"
