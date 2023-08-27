@@ -10,31 +10,33 @@
       yum: name=* state=latest
     - name: Install git, vim
       yum:
-        name:
-          - vim
-          - git
-          - htop
+        name: "{{ item }}"
         state: latest
-    - name: Install Python3
+      loop:
+        - httpd
+        - nginx
+        - mysql 
+    - name: make
+      shell: groupinstall "Development Tools" -y
+    - name: Install git, vim
       yum:
         name:
-          - python3.7-six
-          - python3.7-pip
-          - python3.7
-          - python3.7-setuptools
+          - openssl-devel
+          - libffi-devel
+          - bzip2-devel
         state: latest
-    - name: PIP install
-      pip:
-        name:
-          - pyTelegramBotAPI
-          - six
-        executable: pip3
-        state: present
-    - name: Remove python
-      yum:
-        name:
-          - python3-six 
-          - python3 
-          - python3-setuptools 
-        state: absent
-      become: true
+    # - name: PIP install
+    #   pip:
+    #     name:
+    #       - pyTelegramBotAPI
+    #       - six
+    #     executable: pip3
+    #     state: present
+    # - name: Remove python
+    #   yum:
+    #     name:
+    #       - python3-six 
+    #       - python3 
+    #       - python3-setuptools 
+    #     state: absent
+    #   become: true
