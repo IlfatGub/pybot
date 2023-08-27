@@ -30,7 +30,7 @@
           - mysql 
       become: true
     - name: Register Contents of PGDATA Folder
-      shell: ls /var/
+      shell: ls -la /var/
       register: pg_contents
     - name: Register File Stat
       stat:
