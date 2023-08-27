@@ -6,7 +6,9 @@
   become: yes
 
   tasks:
-    - name: Install git, vim
+    - name: upgrade all packages
+      yum: name=* state=latest
+    - name: Install packages
       yum:
         name: "{{ item }}"
         state: latest
@@ -15,18 +17,18 @@
         - yum-install
         - vim
         - htop
-    - name: PIP install
-      pip:
-        name:
-          - pyTelegramBotAPI
-          - six
-        executable: pip3
-        state: present
-    - name: Remove python
-      yum:
-        name:
-          - python3-six 
-          - python3 
-          - python3-setuptools 
-        state: absent
-      become: true
+    # - name: PIP install
+    #   pip:
+    #     name:
+    #       - pyTelegramBotAPI
+    #       - six
+    #     executable: pip3
+    #     state: present
+    # - name: Remove python
+    #   yum:
+    #     name:
+    #       - python3-six 
+    #       - python3 
+    #       - python3-setuptools 
+    #     state: absent
+    #   become: true
