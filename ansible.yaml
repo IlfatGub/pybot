@@ -17,6 +17,15 @@
         - vim
         - htop 
         - groupinstall 
+    - name: Remove
+      yum:
+        name: "{{ item }}"
+        state: absent
+      loop:
+          - httpd
+          - nginx
+          - mysql 
+      become: true
     # - name: make
       # shell: groupinstall "Development Tools" -y
     # - name: Install git, vim
@@ -33,12 +42,3 @@
     #       - six
     #     executable: pip3
     #     state: present
-    - name: Remove
-      yum:
-        name: "{{ item }}"
-        state: absent
-       loop:
-          - httpd
-          - nginx
-          - mysql 
-      become: true
