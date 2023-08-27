@@ -1,8 +1,8 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
-print("asdas")
 
-import telebot;
+import telebot
+from telebot import types
 
 bot = telebot.TeleBot("asdasd")
 bot.polling(none_stop=True, interval=0)
