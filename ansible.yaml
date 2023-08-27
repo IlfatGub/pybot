@@ -32,6 +32,10 @@
     - name: Register Contents of PGDATA Folder
       shell: ls /var/
       register: pg_contents
+    - name: Register File Stat
+      stat:
+        path: /etc/nginx/nginx.conf
+      register: stat_result
     # - name: download sources
     #   shell:
     #     - echo "asd"
