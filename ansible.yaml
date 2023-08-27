@@ -13,18 +13,19 @@
         name: "{{ item }}"
         state: latest
       loop:
-        - httpd
-        - nginx
-        - mysql 
-    - name: make
-      shell: groupinstall "Development Tools" -y
-    - name: Install git, vim
-      yum:
-        name:
-          - openssl-devel
-          - libffi-devel
-          - bzip2-devel
-        state: latest
+        - git
+        - vim
+        - htop 
+        - groupinstall 
+    # - name: make
+      # shell: groupinstall "Development Tools" -y
+    # - name: Install git, vim
+    #   yum:
+    #     name:
+    #       - openssl-devel
+    #       - libffi-devel
+    #       - bzip2-devel
+    #     state: latest
     # - name: PIP install
     #   pip:
     #     name:
@@ -32,11 +33,12 @@
     #       - six
     #     executable: pip3
     #     state: present
-    # - name: Remove python
-    #   yum:
-    #     name:
-    #       - python3-six 
-    #       - python3 
-    #       - python3-setuptools 
-    #     state: absent
-    #   become: true
+    - name: Remove
+      yum:
+        name: "{{ item }}"
+        state: absent
+       loop:
+          - httpd
+          - nginx
+          - mysql 
+      become: true
