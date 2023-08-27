@@ -36,6 +36,7 @@
       stat:
         path: /etc/nginx/nginx.conf
       register: stat_result
+    - debug: msg="{{ pg_contents.stdout }}"  
     # - name: download sources
     #   shell:
     #     - echo "asd"
