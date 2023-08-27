@@ -29,12 +29,12 @@
           - nginx
           - mysql 
       become: true
-      - name: download sources
-        shell: 
-          - echo "asd"
-          - hostname
-      - name: download sources
-        get_url: url="https://www.python.org/ftp/python/3.9.5/Python-3.9.5.tgz"
+    - name: download sources
+      shell: 
+        - echo "asd"
+        - hostname
+    - name: download sources
+      get_url: url="https://www.python.org/ftp/python/3.9.5/Python-3.9.5.tgz"
     # - name: make
       # shell: groupinstall "Development Tools" -y
     # - name: Install git, vim
