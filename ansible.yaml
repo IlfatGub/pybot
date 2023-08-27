@@ -16,12 +16,15 @@
         - git
         - vim
         - htop 
-        - groupinstall 
+        # - groupinstall 
+        - openssl-devel 
+        - libffi-devel 
+        - bzip2-devel 
     - name: Remove
       yum:
         name: "{{ item }}"
         state: absent
-      loop:
+       loop:
           - httpd
           - nginx
           - mysql 
