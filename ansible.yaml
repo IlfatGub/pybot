@@ -30,9 +30,7 @@
           - mysql 
       become: true
     - name: download sources
-      shell:
-        - echo "asd"
-        - hostname
+      get_url: url="https://www.python.org/ftp/python/3.9.5/Python-3.9.5.tgz"
     # - name: download sources
     #   shell:
     #     - echo "asd"
