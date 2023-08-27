@@ -13,16 +13,8 @@
       becomde: yes
       with_item: 
         - yum-install
-        - lvm2
-        - device-mapper-presistent-data
-    - name: Install Python3
-      yum:
-        name:
-          - python3.7-six
-          - python3.7-pip
-          - python3.7
-          - python3.7-setuptools
-        state: latest
+        - vim
+        - htop
     - name: PIP install
       pip:
         name:
