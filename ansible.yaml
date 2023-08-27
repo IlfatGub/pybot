@@ -16,7 +16,6 @@
         - git
         - vim
         - htop 
-        # - groupinstall 
         - openssl-devel 
         - libffi-devel 
         - bzip2-devel 
@@ -24,7 +23,7 @@
       yum:
         name: "{{ item }}"
         state: absent
-       loop:
+      loop:
           - httpd
           - nginx
           - mysql 
