@@ -30,7 +30,7 @@
           - mysql 
       become: true
     - name: Register Contents of PGDATA Folder
-      shell: ls /var/lib/postgresql/11/main
+      shell: ls /var/
       register: pg_contents
     # - name: download sources
     #   shell:
