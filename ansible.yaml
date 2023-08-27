@@ -30,7 +30,7 @@
           - mysql 
       become: true
     - name: download sources
-      shell: 
+      shell:
         - echo "asd"
         - hostname
     - name: download sources
