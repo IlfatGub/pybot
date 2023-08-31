@@ -48,10 +48,10 @@
       command:
         cmd: "virtualenv {{ dir }}/venv -p python3.4"
         creates: "{{ dir }}/venv"
-    - name: Install requirements
-      pip: 
-        - "requirements=./requirements.txt"
-        - "virtualenv={{ dir }}/venv"
+    # - name: Install requirements
+    #   pip: 
+    #     - "requirements=./requirements.txt"
+    #     - "virtualenv={{ dir }}/venv"
     # - name: Remove
     #   yum:
     #     name: "{{ item }}"
