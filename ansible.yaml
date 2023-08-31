@@ -7,6 +7,7 @@
 
   vars:
     dir: /opt/python
+    dir_python: /opt/python/Python-3.11.3
   tasks:
     - name: upgrade all packages
       yum: name=* state=latest
@@ -39,6 +40,10 @@
         dest: "{{ dir }}"
       become: yes
       become_user: root
+    - name: conf
+      shell: ./configure && make && make install
+      args:
+        chdir: "{{ dir_python}}"
 
     # - name: Remove
     #   yum:
