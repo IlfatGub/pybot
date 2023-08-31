@@ -46,7 +46,7 @@
     #     chdir: "{{ dir_python}}"
     - name: Manually create the initial virtualenv
       command:
-        cmd: "virtualenv {{ dir }}/venv -p python3.11
+        cmd: "virtualenv {{ dir }}/venv -p python3.11"
         creates: "{{ dir }}/venv"
     # - name: Install requirements
     #   pip: 
