@@ -20,23 +20,31 @@
         - libffi-devel 
         - bzip2-devel 
         - wget
-    - name: Remove
-      yum:
-        name: "{{ item }}"
-        state: absent
-      loop:
-          - httpd
-          - nginx
-          - mysql 
-      become: true
-    - name: Register Contents of PGDATA Folder
-      shell: ls -la /var/
-      register: pg_contents
-    - name: Register File Stat
-      stat:
-        path: /etc/nginx/nginx.conf
-      register: stat_result
-    - debug: msg="{{ pg_contents.stdout }}"  
+        - gcc
+        - yum-utils
+        - zlib-devel
+        - cmake
+        - pkgconfig
+    - name: install Development Tools
+      yum: name="@^Development Tools" state=latest update_cache=yes
+
+    # - name: Remove
+    #   yum:
+    #     name: "{{ item }}"
+    #     state: absent
+    #   loop:
+    #       - httpd
+    #       - nginx
+    #       - mysql 
+    #   become: true
+    # - name: Register Contents of PGDATA Folder
+    #   shell: ls -la /var/
+    #   register: pg_contents
+    # - name: Register File Stat
+    #   stat:
+    #     path: /etc/nginx/nginx.conf
+    #   register: stat_result
+    # - debug: msg="{{ pg_contents.stdout }}"  
     # - name: download sources
     #   shell:
     #     - echo "asd"
