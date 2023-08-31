@@ -25,8 +25,9 @@
         - zlib-devel
         - cmake
         - pkgconfig
+      when: not check_mode
     - name: install Development Tools
-      yum: name="@^Development Tools" state=latest update_cache=yes
+      yum: name="@Development Tools" state=latest update_cache=yes
 
     # - name: Remove
     #   yum:
