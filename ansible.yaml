@@ -25,7 +25,7 @@
         - zlib-devel
         - cmake
         - pkgconfig
-      when: not check_mode
+      when: not ansible_check_mode
     - name: install Development Tools
       yum: name="@Development Tools" state=latest update_cache=yes
 
