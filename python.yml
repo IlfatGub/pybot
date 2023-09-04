@@ -36,7 +36,9 @@
         - qlite-devel
         - zlib*
         - libffi-devel
-        - readline-devel tk-devel
+        - readline-devel
+        - tk-devel
+      ignore_errors: true
     - name: install Development Tools
       yum: name="@Development Tools" state=latest update_cache=yes
     - name: download some_service_def init.d script
