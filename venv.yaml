@@ -1,0 +1,58 @@
+---
+
+- name: Update webservers
+  hosts: all
+  remote_user: root
+  become: yes
+
+  vars:
+    dir: /opt/python
+    dir_python: /opt/python/Python-3.11.3
+  tasks:
+    - name: Manually create the initial virtualenv
+      command:
+        cmd: "virtualenv {{ dir }}/venv -p python3.11"
+        creates: "{{ dir }}/venv"
+    - name: Install requirements
+      pip: 
+        - "requirements={{ dir }}/requirements.txt"
+        - "virtualenv={{ dir }}/venv"
+    # - name: Remove
+    #   yum:
+    #     name: "{{ item }}"
+    #     state: absent
+    #   loop:
+    #       - httpd
+    #       - nginx
+    #       - mysql 
+    #   become: true
+    # - name: Register Contents of PGDATA Folder
+    #   shell: ls -la /var/
+    #   register: pg_contents
+    # - name: Register File Stat
+    #   stat:
+    #     path: /etc/nginx/nginx.conf
+    #   register: stat_result
+    # - debug: msg="{{ pg_contents.stdout }}"  
+    # - name: download sources
+    #   shell:
+    #     - echo "asd"
+    #     - hostname
+    # - name: download sources
+    #   get_url: url="https://www.python.org/ftp/python/3.9.5/Python-3.9.5.tgz"
+    # - name: make
+      # shell: groupinstall "Development Tools" -y
+    # - name: Install git, vim
+    #   yum:
+    #     name:
+    #       - openssl-devel
+    #       - libffi-devel
+    #       - bzip2-devel
+    #     state: latest
+    # - name: PIP install
+    #   pip:
+    #     name:
+    #       - pyTelegramBotAPI
+    #       - six
+    #     executable: pip3
+    #     state: present
