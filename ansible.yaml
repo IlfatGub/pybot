@@ -9,45 +9,46 @@
     dir: /opt/python
     dir_python: /opt/python/Python-3.11.3
   tasks:
-    - name: upgrade all packages
-      yum: name=* state=latest
-    - name: Install git, vim
-      yum:
-        name: "{{ item }}"
-        state: latest
-      loop:
-        - git
-        - vim
-        - htop 
-        - openssl-devel 
-        - libffi-devel 
-        - bzip2-devel 
-        - wget
-        - gcc
-        - yum-utils
-        - zlib-devel
-        - cmake
-        - pkgconfig
-    - name: install Development Tools
-      yum: name="@Development Tools" state=latest update_cache=yes
-    - name: download some_service_def init.d script
-      get_url:
-        url:  https://www.python.org/ftp/python/3.11.3/Python-3.11.3.tgz
-        dest: "{{ dir }}"
-    - name: untar
-      ansible.builtin.unarchive:
-        src: "{{ dir }}/Python-3.11.3.tgz"
-        dest: "{{ dir }}"
-      become: yes
-      become_user: root
-    - name: conf
-      shell: ./configure && make && make install
-      args:
-        chdir: "{{ dir_python}}"
-    # - name: Manually create the initial virtualenv
-    #   command:
-    #     cmd: "virtualenv {{ dir }}/venv -p python3.11"
-    #     creates: "{{ dir }}/venv"
+    # - name: upgrade all packages
+    #   yum: name=* state=latest
+    # - name: Install git, vim
+    #   yum:
+    #     name: "{{ item }}"
+    #     state: latest
+    #   loop:
+    #     - git
+    #     - vim
+    #     - htop 
+    #     - openssl-devel 
+    #     - libffi-devel 
+    #     - bzip2-devel 
+    #     - wget
+    #     - gcc
+    #     - yum-utils
+    #     - zlib-devel
+    #     - cmake
+    #     - pkgconfig
+    # - name: install Development Tools
+    #   yum: name="@Development Tools" state=latest update_cache=yes
+    # - name: download some_service_def init.d script
+    #   get_url:
+    #     url:  https://www.python.org/ftp/python/3.11.3/Python-3.11.3.tgz
+    #     dest: "{{ dir }}"
+    # - name: untar
+    #   ansible.builtin.unarchive:
+    #     src: "{{ dir }}/Python-3.11.3.tgz"
+    #     dest: "{{ dir }}"
+    #   become: yes
+    #   become_user: root
+    # - name: conf
+    #   shell: ./configure && make && make install
+    #   args:
+    #     chdir: "{{ dir_python}}"
+    - name: Manually create the initial virtualenv
+      command:
+        cmd: "virtualenv {{ dir }}/venv -p python3.11"
+        creates: "{{ dir }}/venv"
+
     # - name: Install requirements
     #   pip: 
     #     - "requirements=./requirements.txt"
