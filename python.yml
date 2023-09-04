@@ -16,35 +16,46 @@
         name: "{{ item }}"
         state: latest
       loop:
-        - git
-        - vim
-        - htop 
-        - openssl-devel 
-        - libffi-devel 
-        - bzip2-devel 
-        - wget
-        - gcc
-        - yum-utils
-        - zlib-devel
-        - cmake
-        - pkgconfig
-        - openssl
+        # - git
+        # - vim
+        # - htop 
+        # - openssl-devel 
+        # - libffi-devel 
+        # - bzip2-devel 
+        # - wget
+        # - gcc
+        # - yum-utils
+        # - zlib-devel
+        # - cmake
+        # - pkgconfig
+        # - openssl
+        - libreadline-gplv2-dev
+        - libncursesw5-dev
+        - libssl-dev
+        - libsqlite3-dev
+        - tk-dev
+        - libgdbm-dev
+        - libc6-dev
+        - libbz2-dev
     - name: install Development Tools
       yum: name="@Development Tools" state=latest update_cache=yes
     - name: download some_service_def init.d script
       get_url:
         url:  https://www.python.org/ftp/python/3.11.3/Python-3.11.3.tgz
         dest: "{{ dir }}"
+      when: not ansible_check_mode
     - name: untar
       ansible.builtin.unarchive:
         src: "{{ dir }}/Python-3.11.3.tgz"
         dest: "{{ dir }}"
       become: yes
       become_user: root
+      when: not ansible_check_mode
     - name: conf
       shell: ./configure --with-openssl=/home/username/openssl && make && make install
       args:
         chdir: "{{ dir_python}}"
+      when: not ansible_check_mode
     # - name: Manually create the initial virtualenv
     #   command:
     #     cmd: "virtualenv {{ dir }}/venv -p python3.11"
