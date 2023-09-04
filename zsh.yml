@@ -1,0 +1,10 @@
+---
+- name: Update 
+  hosts: all
+  remote_user: root
+  become: yes
+
+  tasks:
+    - name: ZSH install
+      yum:
+        - name: zsh

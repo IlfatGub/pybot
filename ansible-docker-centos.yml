@@ -1,0 +1,42 @@
+---
+- name: -
+  hosts: all
+  become_method: sudo
+  become_user: root
+
+  tasks:
+  - name: Install utils
+    packages:
+      name: "{{ item }}"
+      state: latest
+    becomde: yes
+    with_item: 
+      - yum-install
+      - lvm2
+      - device-mapper-presistent-data
+
+  - name: Add docker repo
+    get_url:
+      url: https://download.docker.com/linux/centos/docker-ce.repo
+      dest: /etc/yum.repos.d/docker-ce.repo
+    become: yes
+  
+  - name: install docker
+    packages:
+      name: docker-ce
+      state: latest
+    become: yes
+
+  - name: docker start
+    service:
+      name: docker
+      state: start
+      enabled: yes
+    become: yes
+  
+    - name: add user
+    user:
+      name: ansible
+      groups: docker
+      append: yes
+    become: yes
