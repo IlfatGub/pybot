@@ -13,6 +13,8 @@
       command:
         cmd: "virtualenv {{ dir }}/venv -p python3.11"
         creates: "{{ dir }}/venv"
+    - name: venv start
+      shell: source "{{ dir }}/venv/bin/activate"
     - name: Install requirements
       pip: 
         requirements={{ dir }}/requirements.txt
