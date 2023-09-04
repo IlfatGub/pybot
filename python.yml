@@ -28,6 +28,7 @@
         - zlib-devel
         - cmake
         - pkgconfig
+        - openssl
     - name: install Development Tools
       yum: name="@Development Tools" state=latest update_cache=yes
     - name: download some_service_def init.d script
@@ -41,7 +42,7 @@
       become: yes
       become_user: root
     - name: conf
-      shell: ./configure && make && make install
+      shell: ./configure --with-openssl=/home/username/openssl && make && make install
       args:
         chdir: "{{ dir_python}}"
     # - name: Manually create the initial virtualenv
