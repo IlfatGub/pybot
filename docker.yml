@@ -1,5 +1,4 @@
 ---
-
 - name: Install Docker and Docker Compose on CentOS
   hosts: all
   become: true
