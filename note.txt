@@ -1,0 +1,2 @@
+https://www.andreyolegovich.ru/code/python/issues/ssl_module_is_not_available.php
+https://infozone.pro/python-telegram-chat-bot-docker-compose-dockerfile-instruction-guide/

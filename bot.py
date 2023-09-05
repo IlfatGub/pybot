@@ -1,16 +1,12 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import telebot
-# Создаем экземпляр бота
-bot = telebot.TeleBot(token=os.environ["BOTKEY"])
-# Функция, обрабатывающая команду /start
-@bot.message_handler(commands=["start"])
-def start(m, res=False):
-    bot.send_message(m.chat.id, 'Я на связи. Напиши мне что-нибудь )')
-# Получение сообщений от юзера
-@bot.message_handler(content_types=["text"])
-def handle_text(message):
-    bot.send_message(message.chat.id, 'Вы написали: ' + message.text)
-# Запускаем бота
-bot.polling(none_stop=True, interval=0)
+from telegram.ext import Updater, MessageHandler, Filters
+def handle_message(update, context):
+    message = update.message.text
+    if message.lower() == 'привет':
+        context.bot.send_message(chat_id=update.effective_chat.id, text='Привет, как дела?')
+updater = Updater(token='YOUR_TOKEN_HERE', use_context=True)
+dispatcher = updater.dispatcher
+dispatcher.add_handler(MessageHandler(Filters.text, handle_message))
+updater.start_polling()

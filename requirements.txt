@@ -1,2 +1,3 @@
-pytelegrambotapi
+python-telegram-bot
+# pytelegrambotapi
 # pytelegrambotapi==4.13.0
