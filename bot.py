@@ -1,12 +1,27 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from telegram.ext import Updater, MessageHandler, Filters
-def handle_message(update, context):
-    message = update.message.text
-    if message.lower() == 'привет':
-        context.bot.send_message(chat_id=update.effective_chat.id, text='Привет, как дела?')
-updater = Updater(token='YOUR_TOKEN_HERE', use_context=True)
-dispatcher = updater.dispatcher
-dispatcher.add_handler(MessageHandler(Filters.text, handle_message))
-updater.start_polling()
+from uuid import uuid4
+from telegram.utils.helpers import escape_markdown
+from telegram import ParseMode, InputTextMessageContent
+from telegram.ext import Updater, CommandHandler, Filters, MessageHandler, RegexHandler, ConversationHandler
+import logging
+import subprocess 
+from dotenv import load_dotenv
+
+load_dotenv()
+api_key = os.environ['TOKEN']
+
+# def start(bot, update):
+#     update.message.reply_text(
+#         'This is personal bot of Andrey Useinov.\n'
+#         'Send /help for more information about commands.')
+                                                             
+# updater = Updater(api_key)
+# dp = updater.dispatcher
+# dp.add_handler(CommandHandler("start", start)) 
+
+# def echo(bot, update):
+#     update.message.reply_text(update.message.text) 
+
+# dp.add_handler(MessageHandler(Filters.text, echo))  

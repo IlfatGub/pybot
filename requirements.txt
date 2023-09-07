@@ -1,3 +1,4 @@
 python-telegram-bot
+emoji
 # pytelegrambotapi
 # pytelegrambotapi==4.13.0
