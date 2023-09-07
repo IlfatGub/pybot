@@ -1,12 +1,12 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from uuid import uuid4
-from telegram.utils.helpers import escape_markdown
-from telegram import ParseMode, InputTextMessageContent
-from telegram.ext import Updater, CommandHandler, Filters, MessageHandler, RegexHandler, ConversationHandler
-import logging
-import subprocess 
+# from uuid import uuid4
+# from telegram.utils.helpers import escape_markdown
+# from telegram import ParseMode, InputTextMessageContent
+# from telegram.ext import Updater, CommandHandler, Filters, MessageHandler, RegexHandler, ConversationHandler
+# import logging
+# import subprocess 
 import os
 from dotenv import load_dotenv
 
