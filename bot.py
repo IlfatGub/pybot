@@ -7,6 +7,7 @@ from telegram import ParseMode, InputTextMessageContent
 from telegram.ext import Updater, CommandHandler, Filters, MessageHandler, RegexHandler, ConversationHandler
 import logging
 import subprocess 
+import os
 from dotenv import load_dotenv
 
 load_dotenv()
