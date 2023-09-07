@@ -7,11 +7,14 @@
 # from telegram.ext import Updater, CommandHandler, Filters, MessageHandler, RegexHandler, ConversationHandler
 # import logging
 # import subprocess 
-import os
 from dotenv import load_dotenv
+import os
 
 load_dotenv()
-api_key = os.environ['TOKEN']
+favorite_language = os.environ['TOKEN']
+print("My favorite programming language is: " + favorite_language) 
+# load_dotenv()
+# api_key = os.environ['TOKEN']
 
 # def start(bot, update):
 #     update.message.reply_text(
