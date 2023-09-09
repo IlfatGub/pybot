@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-from telegram.ext import Updater         # пакет называется python-telegram-bot, но Python-
+from telegram import Updater         # пакет называется python-telegram-bot, но Python-
 from telegram.ext import CommandHandler  # модуль почему-то просто telegram ¯\_(ツ)_/¯
 
 def start(bot, update):
