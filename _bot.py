@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from telegram.ext import Updater, MessageHandler, Filters
+# from telegram.ext import Updater, MessageHandler, Filters
 import os
 from os import environ  as env
 
