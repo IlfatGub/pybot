@@ -3,9 +3,8 @@
 
 # from telegram.ext import Updater, MessageHandler, Filters
 import os
-from os import environ  as env
 
-print(os.env['TOKEN'])
+print(os.environ['TOKEN'])
 
 # def handle_message(update, context):
 #     message = update.message.text
