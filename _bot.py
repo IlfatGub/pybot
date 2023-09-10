@@ -23,4 +23,4 @@ if __name__ == '__main__':
 # пропустит команды,
 # которые отправили
 # до старта бота
-# executor.start_polling(dp, skip_updates=True)
+executor.start_polling(dp, skip_updates=True)
