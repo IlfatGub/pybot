@@ -4,11 +4,12 @@
 import asyncio, os, logging
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters.command import Command
+from pyconfig import config
 
 # Включаем логирование, чтобы не пропустить важные сообщения
 logging.basicConfig(level=logging.INFO)
 # Объект бота
-bot = Bot(token=os.environ['TOKEN'])
+bot = Bot(token=config.bot_token.get_secret_value())
 # Диспетчер
 dp = Dispatcher()
 
