@@ -34,8 +34,8 @@ async def cmd_name(message: types.Message, command: CommandObject):
         await message.answer(f"Привет, {html.bold(html.quote(command.args))}", parse_mode="HTML")
     else:
         await message.answer("Пожалуйста, укажи своё имя после команды /name!")
-        
-@dp.message_handler(content_types=types.ContentTypes.PHOTO)
+
+@dp.message(content_types=types.ContentTypes.PHOTO)
 async def handle_photo(message: types.Message):
     for photo in message.photo:
         await message.reply(f"Вы отправили фотографию с размером {photo.width}x{photo.height} пикселей.")
