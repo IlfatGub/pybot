@@ -1,5 +1,6 @@
 # aiogram==2.23.1
 python-dotenv==1.0.0
 aiogram==3.0
+pydantic
 # pytelegrambotapi
 # pytelegrambotapi==4.13.0
