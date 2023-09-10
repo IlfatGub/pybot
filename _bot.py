@@ -21,8 +21,12 @@ dp = Dispatcher()
 # но пока нам это не важно и рассматриваем только текстовые сообщения
 @dp.message(Command("test"))
 async def any_message(message: types.Message):
-    await message.answer("Hello, <b>world</b>!", parse_mode="HTML")
-    await message.answer("Hello, *world*\!", parse_mode="MarkdownV2")
+    # Получаем текущее время в часовом поясе ПК
+    time_now = datetime.now().strftime('%H:%M')
+    # Создаём подчёркнутый текст
+    added_text = html.underline(f"Создано в {time_now}")
+    # Отправляем новое сообщение с добавленным текстом
+    await message.answer(f"{message.text}\n\n{added_text}", parse_mode="HTML")
 
 @dp.message(Command("name"))
 async def cmd_name(message: types.Message, command: CommandObject):
@@ -30,15 +34,6 @@ async def cmd_name(message: types.Message, command: CommandObject):
         await message.answer(f"Привет, {html.bold(html.quote(command.args))}", parse_mode="HTML")
     else:
         await message.answer("Пожалуйста, укажи своё имя после команды /name!")
-
-@dp.message(F.text)
-async def echo_with_time(message: types.Message):
-    # Получаем текущее время в часовом поясе ПК
-    time_now = datetime.now().strftime('%H:%M')
-    # Создаём подчёркнутый текст
-    added_text = html.underline(f"Создано в {time_now}")
-    # Отправляем новое сообщение с добавленным текстом
-    await message.answer(f"{message.text}\n\n{added_text}", parse_mode="HTML")
 
 # Хэндлер на команду /start
 @dp.message(Command("start"))
