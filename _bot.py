@@ -4,7 +4,7 @@
 import os
 from telegram import InlineQueryResultArticle, InputTextMessageContent
 from telegram.ext import Updater, CommandHandler
-from telegram.ext import MessageHandler, Filters, InlineQueryHandler
+from telegram.ext import MessageHandler, filters, InlineQueryHandler
 
 TOKEN = 'Замените эту строку на token, полученный от @BotFather'
 updater = Updater(token=os.environ['TOKEN'])
@@ -58,7 +58,7 @@ start_handler = CommandHandler('start', start)
 dispatcher.add_handler(start_handler)    
 
 # обработчик текстовых сообщений
-echo_handler = MessageHandler(Filters.text & (~Filters.command), echo)
+echo_handler = MessageHandler(filters.text & (~filters.command), echo)
 dispatcher.add_handler(echo_handler)
 
 # обработчик команды '/caps'
@@ -70,7 +70,7 @@ inline_caps_handler = InlineQueryHandler(inline_caps)
 dispatcher.add_handler(inline_caps_handler)
 
 # обработчик не распознанных команд
-unknown_handler = MessageHandler(Filters.command, unknown)
+unknown_handler = MessageHandler(filters.command, unknown)
 dispatcher.add_handler(unknown_handler)
 
 # запуск прослушивания сообщений
