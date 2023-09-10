@@ -1,31 +1,25 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os
-import time
-import logging
-from aiogram import Bot, Dispatcher, executor, types
+import asyncio, os, logging
+from aiogram import Bot, Dispatcher, types
+from aiogram.filters.command import Command
 
-
-TOKEN = os.environ['TOKEN']
-MSG = "Программировал ли ты сегодня, {}?"
-
+# Включаем логирование, чтобы не пропустить важные сообщения
 logging.basicConfig(level=logging.INFO)
+# Объект бота
+bot = Bot(token=os.environ['TOKEN'])
+# Диспетчер
+dp = Dispatcher()
 
-bot = Bot(token=TOKEN)
-dp = Dispatcher(bot=bot)
+# Хэндлер на команду /start
+@dp.message(Command("start"))
+async def cmd_start(message: types.Message):
+    await message.answer("Hello!")
 
-@dp.message_handler(commands=["start"])
-async def start_handler(message: types.Message):
-    user_id = message.from_user.id
-    user_name = message.from_user.first_name
-    user_full_name = message.from_user.full_name
-    logging.info(f'{user_id} {user_full_name} {time.asctime()}')
-    await message.reply(f"Привет, {user_full_name}!")
-    
-    for i in range(7):
-        await asyncio.sleep(60*60*24)
-        await bot.send_message(user_id, MSG.format(user_name))
+# Запуск процесса поллинга новых апдейтов
+async def main():
+    await dp.start_polling(bot)
 
-if __name__ == "__main__": 
-    executor.start_polling(dp)
+if __name__ == "__main__":
+    asyncio.run(main())
