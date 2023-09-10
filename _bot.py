@@ -35,7 +35,7 @@ async def cmd_name(message: types.Message, command: CommandObject):
     else:
         await message.answer("Пожалуйста, укажи своё имя после команды /name!")
 
-@dp.message(F.text)
+@dp.message(content_types="text")
 async def extract_data(message: types.Message):
     data = {
         "url": "<N/A>",
@@ -55,7 +55,7 @@ async def extract_data(message: types.Message):
         f"E-mail: {html.quote(data['email'])}\n"
         f"Пароль: {html.quote(data['code'])}"
     )
-    
+
 # Хэндлер на команду /start
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message):
