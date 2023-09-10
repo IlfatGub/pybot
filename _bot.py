@@ -4,6 +4,8 @@
 import asyncio, os, logging
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters.command import Command
+from aiogram.filters import CommandObject
+from aiogram import html
 # from pyconfig import config
 
 # Включаем логирование, чтобы не пропустить важные сообщения
@@ -20,6 +22,13 @@ dp = Dispatcher()
 async def any_message(message: types.Message):
     await message.answer("Hello, <b>world</b>!", parse_mode="HTML")
     await message.answer("Hello, *world*\!", parse_mode="MarkdownV2")
+
+@dp.message(Command("name"))
+async def cmd_name(message: types.Message, command: CommandObject):
+    if command.args:
+        await message.answer(f"Привет, {html.bold(html.quote(command.args))}", parse_mode="HTML")
+    else:
+        await message.answer("Пожалуйста, укажи своё имя после команды /name!")
 
 # Хэндлер на команду /start
 @dp.message(Command("start"))
