@@ -6,6 +6,7 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.filters.command import Command
 from aiogram.filters import CommandObject
 from aiogram import html
+from datetime import datetime
 # from pyconfig import config
 
 # Включаем логирование, чтобы не пропустить важные сообщения
@@ -29,6 +30,15 @@ async def cmd_name(message: types.Message, command: CommandObject):
         await message.answer(f"Привет, {html.bold(html.quote(command.args))}", parse_mode="HTML")
     else:
         await message.answer("Пожалуйста, укажи своё имя после команды /name!")
+
+@dp.message(F.text)
+async def echo_with_time(message: types.Message):
+    # Получаем текущее время в часовом поясе ПК
+    time_now = datetime.now().strftime('%H:%M')
+    # Создаём подчёркнутый текст
+    added_text = html.underline(f"Создано в {time_now}")
+    # Отправляем новое сообщение с добавленным текстом
+    await message.answer(f"{message.text}\n\n{added_text}", parse_mode="HTML")
 
 # Хэндлер на команду /start
 @dp.message(Command("start"))
