@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-import handlers
 import time
 import logging
 from aiogram import Bot, Dispatcher, executor, types
