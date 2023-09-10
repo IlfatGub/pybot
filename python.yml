@@ -81,8 +81,8 @@
         creates: "{{ dir }}/venv"
     - name: Install requirements
       pip: 
-        - "requirements=./requirements.txt"
-        - "virtualenv={{ dir }}/venv"
+        requirements: "{{ dir }}/requirements.txt"
+        virtualenv: "{{ dir }}/venv"
 
     # - name: Remove
     #   yum:
