@@ -16,9 +16,9 @@
         name: "{{ item }}"
         state: latest
       loop:
-        # - git
+        - git
         # - vim
-        # - htop 
+        - htop 
         # - openssl-devel 
         # - libffi-devel 
         # - bzip2-devel 
@@ -34,10 +34,16 @@
         - openssl-devel
         - ncurses-devel 
         - qlite-devel
-        - zlib*
+        - zlib
         - libffi-devel
         - readline-devel
         - tk-devel
+        - gdbm-devel
+        - db4-devel
+        - libpcap-devel
+        - xz-devel
+        - epel
+        - openssl11-devel
       ignore_errors: true
     - name: install Development Tools
       yum: name="@Development Tools" state=latest update_cache=yes

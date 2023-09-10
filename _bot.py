@@ -2,17 +2,22 @@
 # -*- coding: utf-8 -*-
 
 import os
-import Updater  
+# import Updater  
 # from telegram import Updater         # пакет называется python-telegram-bot, но Python-
 # from telegram.ext import CommandHandler  # модуль почему-то просто telegram ¯\_(ツ)_/¯
 
 
-import imp
+# import imp
+# try:
+#     Updater.find_module('telegram')
+#     found = True
+# except ImportError:
+#     found = False
+
 try:
-    Updater.find_module('telegram')
-    found = True
+    import Updater
 except ImportError:
-    found = False
+    pass
 
 
 # def start(bot, update):
