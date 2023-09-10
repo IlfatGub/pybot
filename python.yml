@@ -83,8 +83,7 @@
       pip: 
         - "requirements=./requirements.txt"
         - "virtualenv={{ dir }}/venv"
-      tags:
-        - pipinstall
+
     # - name: Remove
     #   yum:
     #     name: "{{ item }}"
