@@ -58,12 +58,23 @@
         dest: "{{ dir }}"
       become: yes
       become_user: root
+    - name: untar
+      ansible.builtin.shell: "sed -i 's/PKG_CONFIG openssl /PKG_CONFIG openssl11 /g' configure"
+      args:
+        chdir: "{{ dir_python}}"
+      # become: yes
+      # become_user: root
       when: not ansible_check_mode
     - name: conf
-      shell: ./configure --with-openssl=/home/username/openssl && make && make install
+      # shell: ./configure  --enable-optimizations && make && make altinstall
+      shell: ./configure  --enable-optimizations && make altinstall
       args:
         chdir: "{{ dir_python}}"
       when: not ansible_check_mode
+    - name: pip self-update
+      pip:
+        name: pip3
+        state: latest
     # - name: Manually create the initial virtualenv
     #   command:
     #     cmd: "virtualenv {{ dir }}/venv -p python3.11"

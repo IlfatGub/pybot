@@ -1,46 +1,79 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import os
-# import Updater  
-# from telegram import Updater         # пакет называется python-telegram-bot, но Python-
-# from telegram.ext import CommandHandler  # модуль почему-то просто telegram ¯\_(ツ)_/¯
+from telegram import InlineQueryResultArticle, InputTextMessageContent
+from telegram.ext import Updater, CommandHandler
+from telegram.ext import MessageHandler, Filters, InlineQueryHandler
 
+TOKEN = 'Замените эту строку на token, полученный от @BotFather'
+updater = Updater(token=os.environ['TOKEN'])
+dispatcher = updater.dispatcher
 
-# import imp
-# try:
-#     Updater.find_module('telegram')
-#     found = True
-# except ImportError:
-#     found = False
+# функция обработки команды '/start'
+def start(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id, 
+                             text="I'm a bot, please talk to me!")
 
-try:
-    import Updater
-except ImportError:
-    pass
+# функция обработки текстовых сообщений
+def echo(update, context):
+    text = 'ECHO: ' + update.message.text 
+    context.bot.send_message(chat_id=update.effective_chat.id, 
+                             text=text)    
 
+# функция обработки команды '/caps'
+def caps(update, context):
+    if context.args:
+        text_caps = ' '.join(context.args).upper()
+        context.bot.send_message(chat_id=update.effective_chat.id, 
+                                 text=text_caps)
+    else:
+        context.bot.send_message(chat_id=update.effective_chat.id, 
+                                 text='No command argument')
+        context.bot.send_message(chat_id=update.effective_chat.id, 
+                                 text='send: /caps argument')
 
-# def start(bot, update):
-#     # подробнее об объекте update: https://core.telegram.org/bots/api#update
-#     bot.sendMessage(chat_id=update.message.chat_id, text="Здравствуйте.")
+# функция обработки встроенного запроса
+def inline_caps(update, context):
+    query = update.inline_query.query
+    if not query:
+        return
+    results = list()
+    results.append(
+        InlineQueryResultArticle(
+            id=query.upper(),
+            title='Convert to UPPER TEXT',
+            input_message_content=InputTextMessageContent(query.upper())
+        )
+    )
+    context.bot.answer_inline_query(update.inline_query.id, results)
 
-# updater = Updater(token='TOKEN')  # тут токен, который выдал вам Ботский Отец!
+# функция обработки не распознных команд
+def unknown(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id, 
+                             text="Sorry, I didn't understand that command.")
 
-# start_handler = CommandHandler('start', start)  # этот обработчик реагирует
-#                                                 # только на команду /start
+# обработчик команды '/start'
+start_handler = CommandHandler('start', start)
+dispatcher.add_handler(start_handler)    
 
-# updater.dispatcher.add_handler(start_handler)   # регистрируем в госреестре обработчиков
-# updater.start_polling()  # поехали!
+# обработчик текстовых сообщений
+echo_handler = MessageHandler(Filters.text & (~Filters.command), echo)
+dispatcher.add_handler(echo_handler)
 
+# обработчик команды '/caps'
+caps_handler = CommandHandler('caps', caps)
+dispatcher.add_handler(caps_handler)
 
+# обработчик встроенных запросов 
+inline_caps_handler = InlineQueryHandler(inline_caps)
+dispatcher.add_handler(inline_caps_handler)
 
-print(os.environ['TOKEN'])
+# обработчик не распознанных команд
+unknown_handler = MessageHandler(Filters.command, unknown)
+dispatcher.add_handler(unknown_handler)
 
-# def handle_message(update, context):
-#     message = update.message.text
-#     if message.lower() == 'привет':
-#         context.bot.send_message(chat_id=update.effective_chat.id, text='Привет, как дела?')
-# updater = Updater(token='YOUR_TOKEN_HERE', use_context=True)
-# dispatcher = updater.dispatcher
-# dispatcher.add_handler(MessageHandler(Filters.text, handle_message))
-# updater.start_polling()
+# запуск прослушивания сообщений
+updater.start_polling()
+# обработчик нажатия Ctrl+C
+updater.idle()
