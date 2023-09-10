@@ -5,9 +5,11 @@ import os
 from telegram import InlineQueryResultArticle, InputTextMessageContent
 from telegram.ext import Updater, CommandHandler
 from telegram.ext import MessageHandler, filters, InlineQueryHandler
+print(os.environ['TOKEN'])
 
-TOKEN = 'Замените эту строку на token, полученный от @BotFather'
-updater = Updater(token=os.environ['TOKEN'])
+# TOKEN = os.environ['TOKEN']
+
+updater = Updater(token=TOKEN)
 dispatcher = updater.dispatcher
 
 # функция обработки команды '/start'
