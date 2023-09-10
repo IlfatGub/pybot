@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-import telegram
 from telegram import InlineQueryResultArticle, InputTextMessageContent
 from telegram.ext import Updater, CommandHandler
 from telegram.ext import MessageHandler, Filters, InlineQueryHandler
