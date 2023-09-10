@@ -35,7 +35,7 @@ async def cmd_name(message: types.Message, command: CommandObject):
     else:
         await message.answer("Пожалуйста, укажи своё имя после команды /name!")
 
-@dp.message(content_types="text")
+@dp.message(content_types=types.ContentType.TEXT)
 async def extract_data(message: types.Message):
     data = {
         "url": "<N/A>",
