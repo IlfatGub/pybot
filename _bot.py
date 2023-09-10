@@ -35,6 +35,27 @@ async def cmd_name(message: types.Message, command: CommandObject):
     else:
         await message.answer("Пожалуйста, укажи своё имя после команды /name!")
 
+@dp.message(F.text)
+async def extract_data(message: types.Message):
+    data = {
+        "url": "<N/A>",
+        "email": "<N/A>",
+        "code": "<N/A>"
+    }
+    entities = message.entities or []
+    for item in entities:
+        if item.type in data.keys():
+            # Неправильно
+            # data[item.type] = message.text[item.offset : item.offset+item.length]
+            # Правильно
+            data[item.type] = item.extract_from(message.text)
+    await message.reply(
+        "Вот что я нашёл:\n"
+        f"URL: {html.quote(data['url'])}\n"
+        f"E-mail: {html.quote(data['email'])}\n"
+        f"Пароль: {html.quote(data['code'])}"
+    )
+    
 # Хэндлер на команду /start
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message):
