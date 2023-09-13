@@ -5,3 +5,4 @@ pip install --force-reinstall -v "aiogram==2.23.1"
 
 
 https://mastergroosha.github.io/aiogram-3-guide/quickstart/
+https://victor-komlev.ru/upravlenie-soobshheniyami-v-bote-telegram/
