@@ -12,6 +12,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 import random
 from contextlib import suppress
 from aiogram.exceptions import TelegramBadRequest
+import re
 
 # from dotenv import load_dotenv
 import settings
@@ -66,6 +67,46 @@ async def cmd_start(message: types.Message):
     )
     await message.answer("Как подавать котлеты?", reply_markup=keyboard)
 
+user_debt = {}
+
+@dp.message(F.text.startswith("-"))
+async def with_puree(message: types.Message):
+    user_debt[message.from_user.id] = message.text
+    await message.answer("Кому записываем долг?", reply_markup=debtor())
+
+def debtor():
+    buttons = [
+        [
+            types.InlineKeyboardButton(text="Человек 1", callback_data="add_debt")
+        ],
+        [
+            types.InlineKeyboardButton(text="Человек 2", callback_data="add_debt")
+        ],
+        [
+            types.InlineKeyboardButton(text="Отмена", callback_data="add_debt")
+        ],
+    ]
+    keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
+    return keyboard
+
+@dp.callback_query(F.data.startswith("add_debt"))
+async def callbacks_num(callback: types.CallbackQuery):
+    user_value = user_debt.get(callback.from_user.id, 0)
+    action = user_value.split(",")
+    user_value = re.findall(r'\d+', user_value)
+
+    # if action == "incr":
+    #     user_data[callback.from_user.id] = user_value+1
+    #     await update_num_text(callback.message, user_value+1)
+    # elif action == "decr":
+    #     user_data[callback.from_user.id] = user_value-1
+    #     await update_num_text(callback.message, user_value-1)
+    # elif action == "finish":
+    #     await callback.message.edit_text(f"Итого: {user_value}")
+        
+    await callback.message.edit_text(f"{user_value[0]},{action},{len(action)}")
+    await callback.answer()
+    
 @dp.message(F.text.lower() == "с пюрешкой")
 async def with_puree(message: types.Message):
     await message.reply("Отличный выбор!")
@@ -98,6 +139,9 @@ async def send_random_value(callback: types.CallbackQuery):
 # Здесь хранятся пользовательские данные.
 # Т.к. это словарь в памяти, то при перезапуске он очистится
 user_data = {}
+
+
+
 
 def get_keyboard():
     buttons = [
