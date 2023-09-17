@@ -13,6 +13,7 @@ import random
 from contextlib import suppress
 from aiogram.exceptions import TelegramBadRequest
 import re
+from base import DataBase
 
 # from dotenv import load_dotenv
 import settings
@@ -28,6 +29,13 @@ bot = Bot(token=settings.BOT_TOKEN)
 dp = Dispatcher()
 
 
+db = DataBase("my_database.db")
+# db.addTableUsers()
+# db.deleteTable()
+# db.addTableUsers()
+# db.addUser('ilat', 'ilfat@mail.ru', '31')
+# db.getUser()
+
 
 # Если не указать фильтр F.text, 
 # то хэндлер сработает даже на картинку с подписью /test,
@@ -39,7 +47,7 @@ async def any_message(message: types.Message):
     # Создаём подчёркнутый текст
     added_text = html.underline(f"Создано в {time_now}")
     # Отправляем новое сообщение с добавленным текстом
-    await message.answer(f"{message.text}{message}\n\n{added_text}", parse_mode="HTML")
+    await message.answer(f"{db.getUser()}\n\n{added_text}", parse_mode="HTML")
 
 @dp.message(Command("name"))
 async def cmd_name(message: types.Message, command: CommandObject):
@@ -54,21 +62,33 @@ async def cmd_name(message: types.Message, command: CommandObject):
 #         await message.reply(f"Вы отправили фотографию с размером {photo.width}x{photo.height} пикселей.")
 
 # Хэндлер на команду /start
-@dp.message(Command("start"))
-async def cmd_start(message: types.Message):
-    kb = [
-        [types.KeyboardButton(text="С пюрешкой")],
-        [types.KeyboardButton(text="Без пюрешки")]
-    ]
-    keyboard = types.ReplyKeyboardMarkup(
-        keyboard=kb,
-        resize_keyboard=True,
-        input_field_placeholder="Выберите способ подачи"
-    )
-    await message.answer("Как подавать котлеты?", reply_markup=keyboard)
+# @dp.message(Command("start"))
+# async def cmd_start(message: types.Message):
+#     kb = [
+#         [types.KeyboardButton(text="С пюрешкой")],
+#         [types.KeyboardButton(text="Без пюрешки")]
+#     ]
+#     keyboard = types.ReplyKeyboardMarkup(
+#         keyboard=kb,
+#         resize_keyboard=True,
+#         input_field_placeholder="Выберите способ подачи"
+#     )
+#     await message.answer("Как подавать котлеты?", reply_markup=keyboard)
 
 user_debt = {}
 
+@dp.message(F.text.startswith("+"))
+async def with_puree(message: types.Message):
+    _sp = message.text.split()
+    if len(_sp) == 1:
+        await message.answer("Добавьте должника. Пример Сообщения '+100 Вася'")
+    else:
+        old_summ = db.getDebtorSumm(_sp[1])
+        db.debtor(_sp[1], _sp[0])
+        new_summ = db.getDebtorSumm(_sp[1])
+        await message.answer("Долг изменен")
+        await message.answer(f"Старый долг: {old_summ}.  Новый долг {new_summ}")
+    
 @dp.message(F.text.startswith("-"))
 async def with_puree(message: types.Message):
     user_debt[message.from_user.id] = message.text
