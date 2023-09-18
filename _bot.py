@@ -28,8 +28,8 @@ bot = Bot(token=settings.BOT_TOKEN)
 # Диспетчер
 dp = Dispatcher()
 
-
 db = DataBase("my_database.db")
+
 # db.addTableUsers()
 # db.deleteTable()
 # db.addTableUsers()
@@ -80,21 +80,38 @@ user_debt = {}
 @dp.message(F.text.startswith("+"))
 async def with_puree(message: types.Message):
     _sp = message.text.split()
-    if len(_sp) == 1:
+    
+    if len(_sp) > 1:
+        db.debtor = _sp[1] 
+        
+    db.setSumm(_sp[0])
+        
+    db.summ = re.sub(r'\+', r'', _sp[0])
+    db.user_ct_id = message.from_user.id
+    
+    if db.summ.isdigit() == False:
+        print(db.summ)
+        await message.answer("Должно быть числом")
+    elif len(_sp) == 1:
+        await message.answer("Кому записываем долг?", reply_markup=debtor(db.getDebtorList()))
         await message.answer("Добавьте должника. Пример Сообщения '+100 Вася'")
+        await message.answer(F"{db.getDebtorList()}")
     else:
-        old_summ = db.getDebtorSumm(_sp[1])
-        db.debtor(_sp[1], _sp[0])
-        new_summ = db.getDebtorSumm(_sp[1])
-        await message.answer("Долг изменен")
-        await message.answer(f"Старый долг: {old_summ}.  Новый долг {new_summ}")
+        old_summ = db.getDebtorSumm()
+        db.debt()
+        await message.answer(f"db.debtor. Старый долг: {old_summ}.  Новый долг {db.getDebtorSumm()}")
     
 @dp.message(F.text.startswith("-"))
 async def with_puree(message: types.Message):
     user_debt[message.from_user.id] = message.text
     await message.answer("Кому записываем долг?", reply_markup=debtor())
 
-def debtor():
+def debtor(list):
+    
+    # buttons = []
+    
+    # for user in list:
+    #     buttons.append(types.InlineKeyboardButton(text="Человек 1", callback_data="add_debt"))
     buttons = [
         [
             types.InlineKeyboardButton(text="Человек 1", callback_data="add_debt")
@@ -106,6 +123,7 @@ def debtor():
             types.InlineKeyboardButton(text="Отмена", callback_data="add_debt")
         ],
     ]
+    print(buttons)
     keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard
 
