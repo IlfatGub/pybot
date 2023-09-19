@@ -1,22 +1,22 @@
-import sqlite3 as sql
+# import sqlite3 as sql
 
-conn  = sql.connect("my_database.db")
+# conn  = sql.connect("my_database.db")
 
-with conn:
-    # conn.row_factory = sql.Row
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM Users')
-    rows = cursor.fetchall()
-    users_list = []
-    for user in rows:
-        user_dict = {
-            'id': user[0],
-            'username': user[1],
-            'email': user[2],
-            'age': user[3]
-        }
-        users_list.append(user_dict)
-    print(users_list)
+# with conn:
+#     # conn.row_factory = sql.Row
+#     cursor = conn.cursor()
+#     cursor.execute('SELECT * FROM Users')
+#     rows = cursor.fetchall()
+#     users_list = []
+#     for user in rows:
+#         user_dict = {
+#             'id': user[0],
+#             'username': user[1],
+#             'email': user[2],
+#             'age': user[3]
+#         }
+#         users_list.append(user_dict)
+#     print(users_list)
 
 
 
@@ -67,4 +67,10 @@ with conn:
 #   print(user.id)
 # Сохраняем изменения и закрываем соединение
 # connection.commit()
-conn.close()
+# conn.close()
+from datetime import datetime
+
+
+data = "2023-09-18 13:31:15"
+print(data[0:10])
+

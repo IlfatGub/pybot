@@ -6,11 +6,12 @@ class DataBase(object):
     # summ = None
     # user_ct_id = None
     
-    def __init__(self, file, debtor = None, summ = None, user_ct_id = None):
+    def __init__(self, file, debtor = None, summ = None, user_ct_id = None, id = None):
         self.file = file
         self.debtor = debtor
         self.summ = summ
         self.user_ct_id = user_ct_id
+        self.id = id
         
     def setDebtor(self, value):
         self.debtor = value
@@ -87,6 +88,21 @@ class DataBase(object):
         ''')
         self.commit_close(conn)
 
+    # def getListDebt(self):
+    #     self.query('SELECT * FROM debtor_history WHERE debtor_id = ?', [self.id])
+    #     users_list = []
+    #     for user in users:
+    #         user_dict = {
+    #             'id': user[0],
+    #             'username': user[1],
+    #             'email': user[2],
+    #             'age': user[3],
+    #             'created_at': user[4],
+    #         }
+    #         users_list.append(user_dict)
+    #     print()
+    #     return users_list
+    
     def existsDebtor(self):
         e = self.query_select('SELECT COUNT(*) FROM debtor WHERE name = ?', [self.debtor])
         return e[0]
@@ -95,15 +111,17 @@ class DataBase(object):
         self.query('INSERT INTO debtor (name, summ) VALUES (?, ?)', [self.debtor, self.summ])
 
     def addDebtDebtor(self):
-        self.query('UPDATE debtor SET summ = summ + ? WHERE name = ?' , [self.summ, self.debtor])
+        if self.summ[0] == '+':
+            self.query('UPDATE debtor SET summ = summ + ? WHERE name = ?' , [self.summ[1:], self.debtor])
+        else:
+            self.query('UPDATE debtor SET summ = summ - ? WHERE name = ?' , [self.summ[1:], self.debtor])
         
     def addDebtDebtorHistory(self):
         res = self.query_select('SELECT id, summ FROM debtor WHERE name = ?', [self.debtor])
-        print(type(res))
-        if len(res) > 1:
-            self.query(
-                'INSERT INTO debtor_history (user_ct_id, debtor_id, summ, total_summ) VALUES (?, ?, ?, ?)', 
-                [self.user_ct_id, res[0], self.summ,  res[1]])
+        print(res)
+        self.query(
+            'INSERT INTO debtor_history (user_ct_id, debtor_id, summ, total_summ) VALUES (?, ?, ?, ?)', 
+            [self.user_ct_id, res[0][0], self.summ,  res[0][1]])
         
     # def addDebtDebtorHistory(self, debtor, summ):
     #     conn = self.connect()
@@ -122,6 +140,8 @@ class DataBase(object):
     #     ''')
 
     def getDebtorSumm(self):
+        print(self.debtor)
+        print(self.summ)
         if self.existsDebtor() == 0:
             return 0
         else: 
@@ -132,7 +152,14 @@ class DataBase(object):
     
     def getDebtorList(self):
        return self.query_select('SELECT id, name FROM debtor')
-        
+
+    def getDebtorHistoryList(self):
+       return self.query_select('SELECT * FROM debtor_history WHERE debtor_id = ?', (self.id))
+    
+    def getDebetorById(self):
+        if self.id:
+            return self.query_select('SELECT * FROM debtor WHERE id = ?', (self.id))[0]
+    
     def getDebetorId(self):
         return 0
     
