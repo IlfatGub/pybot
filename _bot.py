@@ -15,6 +15,8 @@ from contextlib import suppress
 from aiogram.exceptions import TelegramBadRequest
 import re
 from base import DataBase
+from tabulate import tabulate
+
 
 # from dotenv import load_dotenv
 import settings
@@ -25,7 +27,7 @@ import settings
 # Включаем логирование, чтобы не пропустить важные сообщения
 logging.basicConfig(level=logging.INFO)
 # Объект бота
-bot = Bot(token=settings.BOT_TOKEN)
+bot = Bot(token=settings.BOT_TOKEN, parse_mode="HTML")
 # Диспетчер
 dp = Dispatcher()
 
@@ -50,12 +52,12 @@ db = DataBase("my_database.db")
 #     # Отправляем новое сообщение с добавленным текстом
 #     await message.answer(f"{db.getUser()}\n\n{added_text}", parse_mode="HTML")
 
-# @dp.message(Command("name"))
-# async def cmd_name(message: types.Message, command: CommandObject):
-#     if command.args:
-#         await message.answer(f"Привет, {html.bold(html.quote(command.args))}", parse_mode="HTML")
-#     else:
-        # await message.answer("Пожалуйста, укажи своё имя после команды /name!")
+@dp.message(Command("name"))
+async def cmd_name(message: types.Message, command: CommandObject):
+    if command.args:
+        await message.answer(f"Привет, {html.bold(html.quote(command.args))}", parse_mode="HTML")
+    else:
+        await message.answer("Пожалуйста, укажи своё имя после команды /name!")
 
 # @dp.message(content_types=types.ContentTypes.PHOTO)
 # async def handle_photo(message: types.Message):
@@ -75,13 +77,25 @@ async def cmd_start(message: types.Message):
 
 # user_debt = {}
 
+
+@dp.message(F.text.startswith("debt"))
+async def debt_add(message: types.Message):
+    res = message.text.split()
+    if len(res) == 1:
+        await message.answer(f"Надо указать должника")
+    else:
+        db.debtor = res[1] 
+        db.addDebtor()
+        await message.answer(f"{html.bold(res[1])} - Добавлен")
+        
+    
+
 @dp.message(F.text.startswith(("+", "-")))
 async def with_puree(message: types.Message):
     _sp = message.text.split()
     
     if len(_sp) > 1:
         db.debtor = _sp[1] 
-        
         
     db.setSumm(_sp[0])
     summ = re.sub(r'(\+|-)', r'', _sp[0])   
@@ -90,13 +104,17 @@ async def with_puree(message: types.Message):
     if summ.isdigit() == False:
         await message.answer("Должно быть числом")
     elif len(_sp) == 1:
-        await message.answer("Кому записываем долг?", reply_markup=debtor(db.getDebtorList()))
-        # await message.answer("Добавьте должника. Пример Сообщения '+100 Вася'")
+        await message.answer("Кому записываем долг?", reply_markup=debtor(db.getDebtorList(), parse_mode="HTML"))
+        if len(db.getDebtorList()) == 0:
+            await message.answer("Добавьте должника. Пример Сообщения '+100 Иван'")
         # await message.answer(F"{db.getDebtorList()}")
     else:
-        old_summ = db.getDebtorSumm()
+        if db.existsDebtor()[0] == 0:
+            old_summ = 0
+        else:
+            old_summ = db.getDebtorSumm()
         db.debt()
-        await message.answer(f"db.debtor. Старый долг: {old_summ}.  Новый долг {db.getDebtorSumm()}")
+        await message.answer(f"{db.debtor}. Старый долг: {old_summ}.  Новый долг {db.getDebtorSumm()}")
     
 # @dp.message(F.text.startswith("-") )
 # async def with_puree(message: types.Message):
@@ -125,19 +143,23 @@ async def callbacks_num(callback: types.CallbackQuery):
 
 @dp.callback_query(F.data.startswith("list_debt_"))
 async def callbacks_num(callback: types.CallbackQuery):
+    
     id_debtor = callback.data.split("_")[2]
     db.id = id_debtor
     db.debtor = db.getDebetorById()[1]
     debts = db.getDebtorHistoryList()
+    
     if debts:
-        string = f"{db.debtor} \n"
+        string = f"{html.bold(html.quote(db.debtor))} \n"
         for debt in debts:
-            string = f"{string}{str(debt[3])}руб - {str(debt[4][0:10])} \n"
+            price = f"{str(debt[3])} руб"
+            date = str(debt[4][0:10]).ljust(15)
+            string = f"{string}{date}  {price} \n"
     else:
         string = 'пусто'
-        
+    
     await callback.message.edit_text(f"{string}")
-    await callback.answer()
+    await callback.answer(parse_mode="HTML")
     
 @dp.message(F.text.lower() == "узнать долги")
 async def with_puree(message: types.Message):
@@ -148,6 +170,40 @@ async def with_puree(message: types.Message):
 async def without_puree(message: types.Message):
     await message.reply("Так невкусно!")
 
+
+# @dp.message(Command("debt"))
+# async def handle_delete_last(message: types.Message):
+#     await message.answer(f"{message.text}")
+
+@dp.message(F.text)
+async def extract_data(message: types.Message):
+    text = "Привет. Вот какие команды у меня есть:"
+    await message.answer(
+        f"{html.bold(text)}\n"
+        f"{html.bold('debt ')} {html.italic('[name]')} - добавляем должника \n"
+        f"{html.bold('+')}{html.italic('[price] [comment]')} - добавляем дол \n"
+        f"{html.bold('-')}{html.italic('[price] [comment]')} - уменьшаем долг \n"
+    )
+    # data = {
+    #     "url": "<N/A>",
+    #     "email": "<N/A>",
+    #     "code": "<N/A>"
+    # }
+    # entities = message.entities or []
+    # for item in entities:
+    #     if item.type in data.keys():
+    #         # Неправильно
+    #         # data[item.type] = message.text[item.offset : item.offset+item.length]
+    #         # Правильно
+    #         data[item.type] = item.extract_from(message.text)
+    # await message.reply(
+    #     "Вот что я нашёл:\n"
+    #     f"URL: {html.quote(data['url'])}\n"
+    #     f"E-mail: {html.quote(data['email'])}\n"
+    #     f"Пароль: {html.quote(data['code'])}"
+    # )
+
+    
 
 # @dp.message(Command("random"))
 # async def cmd_random(message: types.Message):
@@ -229,24 +285,31 @@ async def without_puree(message: types.Message):
     
 # @dp.message(F.text)
 # async def extract_data(message: types.Message):
-#     data = {
-#         "url": "<N/A>",
-#         "email": "<N/A>",
-#         "code": "<N/A>"
-#     }
-#     entities = message.entities or []
-#     for item in entities:
-#         if item.type in data.keys():
-#             # Неправильно
-#             # data[item.type] = message.text[item.offset : item.offset+item.length]
-#             # Правильно
-#             data[item.type] = item.extract_from(message.text)
-#     await message.reply(
-#         "Вот что я нашёл:\n"
-#         f"URL: {html.quote(data['url'])}\n"
-#         f"E-mail: {html.quote(data['email'])}\n"
-#         f"Пароль: {html.quote(data['code'])}"
+#     await message.answer(
+#         html.bold(html.quote(db.debtor))
+#         "Привет. Вот какие команды у меня есть:\n"
+#         f"debt name - добавляем должника \n"
+#         f"+price comment - добавляем долг"
+#         f"-price comment - уменьшаем долг"
 #     )
+    # data = {
+    #     "url": "<N/A>",
+    #     "email": "<N/A>",
+    #     "code": "<N/A>"
+    # }
+    # entities = message.entities or []
+    # for item in entities:
+    #     if item.type in data.keys():
+    #         # Неправильно
+    #         # data[item.type] = message.text[item.offset : item.offset+item.length]
+    #         # Правильно
+    #         data[item.type] = item.extract_from(message.text)
+    # await message.reply(
+    #     "Вот что я нашёл:\n"
+    #     f"URL: {html.quote(data['url'])}\n"
+    #     f"E-mail: {html.quote(data['email'])}\n"
+    #     f"Пароль: {html.quote(data['code'])}"
+    # )
 
 
 

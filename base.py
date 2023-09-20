@@ -84,6 +84,7 @@ class DataBase(object):
         id INTEGER PRIMARY KEY,
         name TEXT NOT NULL,
         summ INTEGER NOT NULL
+        active INTEGER NOT NULL
         )
         ''')
         self.commit_close(conn)
@@ -108,7 +109,12 @@ class DataBase(object):
         return e[0]
 
     def addDebtor(self):
-        self.query('INSERT INTO debtor (name, summ) VALUES (?, ?)', [self.debtor, self.summ])
+        if self.existsDebtor()[0] == 0:
+            if not self.summ:
+                self.summ = 0
+            self.query('INSERT INTO debtor (name, summ, active) VALUES (?, ?, 1)', [self.debtor, self.summ])
+        else:
+            self.query('UPDATE debtor SET active = 1 WHERE name = ?', [self.debtor])
 
     def addDebtDebtor(self):
         if self.summ[0] == '+':
@@ -140,8 +146,8 @@ class DataBase(object):
     #     ''')
 
     def getDebtorSumm(self):
-        print(self.debtor)
-        print(self.summ)
+        # print(self.debtor)
+        # print(self.summ)
         if self.existsDebtor() == 0:
             return 0
         else: 
@@ -152,6 +158,9 @@ class DataBase(object):
     
     def getDebtorList(self):
        return self.query_select('SELECT id, name FROM debtor')
+   
+    def getActiveDebtorList(self):
+       return self.query_select('SELECT id, name FROM debtor WHERE summ > 0')
 
     def getDebtorHistoryList(self):
        return self.query_select('SELECT * FROM debtor_history WHERE debtor_id = ?', (self.id))
@@ -164,8 +173,9 @@ class DataBase(object):
         return 0
     
     def debt(self):
-        if self.existsDebtor() == 0:
+        if self.existsDebtor()[0] == 0:
             self.addDebtor()
+            self.addDebtDebtorHistory()
         else:
             self.addDebtDebtor()
             self.addDebtDebtorHistory()
