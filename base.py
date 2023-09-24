@@ -42,8 +42,9 @@ class DataBase(object):
     def query(self, sql, var):
         conn = self.connect()
         cursor = conn.cursor()
-        cursor.execute(sql, var)
+        result = cursor.execute(sql, var)
         self.commit_close(conn)
+        return result
 
     def query_select(self, sql, var = None):
         conn = self.connect()
@@ -53,7 +54,12 @@ class DataBase(object):
         else:
             cursor.execute(sql, var)
         return cursor.fetchall()
-        
+
+    def dropTable(self):
+        print("sd")
+        # print(self.query('DROP TABLE debtor', []).rowcount)
+        # print(self.query('DROP TABLE debtor_history', []).rowcount)
+
     def createTableDebtor(self):
         conn = self.connect()
         cursor = conn.cursor()
@@ -63,8 +69,8 @@ class DataBase(object):
         user_ct_id INTEGER NOT NULL,
         debtor_id INTEGER NOT NULL,
         summ INTEGER NOT NULL,
-        datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        total_summ INTEGER NOT NULL
+        date_ct TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        total_summ INTEGER NOT NULL,
         comment STRING
         )
         ''')
@@ -75,21 +81,28 @@ class DataBase(object):
         UPDATE debtor_history SET date_ct = CURRENT_TIMESTAMP WHERE id = NEW.id;
         END;
         ''')
-        self.commit_close(conn)
-        
-        
-    def createTableDebtorHistoru(self):
-        conn = self.connect()
-        cursor = conn.cursor()
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS debtor (
         id INTEGER PRIMARY KEY,
         name TEXT NOT NULL,
-        summ INTEGER NOT NULL
+        summ INTEGER NOT NULL,
         active INTEGER NOT NULL
         )
         ''')
         self.commit_close(conn)
+        
+    # def createTableDebtorHistoru(self):
+    #     conn = self.connect()
+    #     cursor = conn.cursor()
+    #     cursor.execute('''
+    #     CREATE TABLE IF NOT EXISTS debtor (
+    #     id INTEGER PRIMARY KEY,
+    #     name TEXT NOT NULL,
+    #     summ INTEGER NOT NULL
+    #     active INTEGER NOT NULL
+    #     )
+    #     ''')
+    #     self.commit_close(conn)
 
     # def getListDebt(self):
     #     self.query('SELECT * FROM debtor_history WHERE debtor_id = ?', [self.id])
@@ -107,8 +120,7 @@ class DataBase(object):
     #     return users_list
     
     def existsDebtor(self):
-        e = self.query_select('SELECT COUNT(*) FROM debtor WHERE name = ?', [self.debtor])
-        return e[0]
+        return self.query_select('SELECT COUNT(*) FROM debtor WHERE name = ?', [self.debtor])[0]
 
     def addDebtor(self):
         if self.existsDebtor()[0] == 0:
@@ -124,8 +136,8 @@ class DataBase(object):
         else:
             self.query('UPDATE debtor SET summ = summ - ? WHERE name = ?' , [self.summ[1:], self.debtor])
 
-        if self.query_select('SELECT * FROM debtor WHERE id = ?', (self.id))[0][2] == 0:
-            self.query('UPDATE debtor SET active = 0 WHERE id = ?', [self.id])
+        if self.query_select('SELECT * FROM debtor WHERE id = ?', (self.id,))[0][2] == 0:
+            self.query('UPDATE debtor SET active = 0 WHERE id = ?', [self.id,])
         
     def addDebtDebtorHistory(self):
         res = self.query_select('SELECT id, summ FROM debtor WHERE name = ?', [self.debtor])
@@ -133,6 +145,7 @@ class DataBase(object):
             'INSERT INTO debtor_history (user_ct_id, debtor_id, summ, total_summ, comment) VALUES (?, ?, ?, ?, ?)', 
             [self.user_ct_id, res[0][0], self.summ,  res[0][1], self.comment]
             )
+        self.comment = None
         
     # def addDebtDebtorHistory(self, debtor, summ):
     #     conn = self.connect()
@@ -168,11 +181,11 @@ class DataBase(object):
        return self.query_select('SELECT id, name FROM debtor WHERE active = 1')
 
     def getDebtorHistoryList(self):
-       return self.query_select('SELECT * FROM debtor_history WHERE debtor_id = ? ORDER BY date_ct DESC LIMIT 5', (self.id))
+       return self.query_select('SELECT * FROM debtor_history WHERE debtor_id = ? ORDER BY date_ct DESC LIMIT 5', (self.id, ))
     
     def getDebetorById(self):
         if self.id:
-            return self.query_select('SELECT * FROM debtor WHERE id = ?', (self.id))[0]
+            return self.query_select('SELECT * FROM debtor WHERE id = ?', [self.id,])[0]
     
     def getDebetorId(self):
         return 0

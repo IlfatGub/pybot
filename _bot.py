@@ -33,19 +33,25 @@ db = DataBase("my_database.db")
 @dp.message(Command("name"))
 async def cmd_name(message: types.Message, command: CommandObject):
     if command.args:
-        await message.answer(f"Привет, {html.bold(html.quote(command.args))}", parse_mode="MARKDOWN_V2")
+        await message.answer(f"Привет, {html.bold(html.quote(command.args))}")
     else:
         await message.answer("Пожалуйста, укажи своё имя после команды /name!")
 
 # Хэндлер на команду /start
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message):
-    kb = [ [types.KeyboardButton(text="Узнать долги", callback_data="find_out_debts")], ]
+    kb = [[types.KeyboardButton(text="Узнать долги", callback_data="find_out_debts")], ]
     keyboard = types.ReplyKeyboardMarkup( keyboard=kb, )
     await message.answer("-", reply_markup=keyboard)
 
+# Хэндлер на команду /start
+@dp.message(Command("drop"))
+async def cmd_start(message: types.Message):
+    db.dropTable()
+    db.createTableDebtor()
+    # await message.answer("Таблицы очищены")
 
-@dp.message(F.text.startswith("debt"))
+@dp.message(F.text.startswith("!"))
 async def debt_add(message: types.Message):
     res = message.text.split()
     if len(res) == 1:
@@ -124,11 +130,14 @@ def getListDebtForDebtor():
     db.debtor = _debtor[1]
     debts = db.getDebtorHistoryList()
 
-    string = ''    
+    string = ''  
     if debts:
         string = html.bold(f'{db.debtor}. Общая сумма долга: {_debtor[2]} \n')
         for debt in debts:
-            string = f"{string} {debt[4][0:10]}  |  {debt[3]}руб  |  {str(debt[6])} \n"
+            comment = ''
+            if debt[6]:
+                comment =  str(debt[6])
+            string += f"{debt[4][0:10]}  |  {debt[3]}руб  |  {comment} \n"
     else:
         string = 'пусто'
     return string
@@ -138,25 +147,20 @@ def getListDebtForDebtor():
 async def with_puree(message: types.Message):
     await message.answer("Кому записываем долг?", reply_markup=debtor(db.getActiveDebtorList(), "list_debt_"))
 
-
-@dp.message(F.text.lower() == "без пюрешки")
-async def without_puree(message: types.Message):
-    await message.reply("Так невкусно!")
-
-
 @dp.message(F.text)
 async def extract_data(message: types.Message):
     text = "Привет. Вот какие команды у меня есть:"
-    row1 = f"{html.bold('debt ')} {html.italic('[name]')}"
-    row2 = f"{html.bold('+')}{html.italic('[price] [comment]')}"
-    row3= f"{html.bold('-')}{html.italic('[price] [comment]')}"
+    row1 = f"{html.bold('!')}{html.italic(' [name]')}"
+    row2 = f"{html.bold('+')}{html.italic(' [price] [comment]')}"
+    row3 = f"{html.bold('-')}{html.italic(' [price] [comment]')}"
+    row4 = f"{html.bold('@')}{html.italic(' [comment]')}"
     await message.answer(
         f"{html.bold(text)}\n"
-        f"{row1.ljust(50)} добавляем должника \n"
-        f"{row2.ljust(50)} добавляем дол \n"
-        f"{row3.ljust(50)} уменьшаем долг \n"
+        f"{row1} - добавляем должника \n"
+        f"{row2} - добавляем долг \n"
+        f"{row3} - уменьшаем долг \n"
+        f"{row4} - Запоминаем даты \n"
     )
-
     
 # Запуск процесса поллинга новых апдейтов
 async def main():
