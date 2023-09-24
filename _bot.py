@@ -16,7 +16,7 @@ from aiogram.exceptions import TelegramBadRequest
 import re
 from base import DataBase
 from tabulate import tabulate
-
+import prettytable as pt
 
 # from dotenv import load_dotenv
 import settings
@@ -55,7 +55,7 @@ db = DataBase("my_database.db")
 @dp.message(Command("name"))
 async def cmd_name(message: types.Message, command: CommandObject):
     if command.args:
-        await message.answer(f"Привет, {html.bold(html.quote(command.args))}", parse_mode="HTML")
+        await message.answer(f"Привет, {html.bold(html.quote(command.args))}", parse_mode="MARKDOWN_V2")
     else:
         await message.answer("Пожалуйста, укажи своё имя после команды /name!")
 
@@ -92,10 +92,10 @@ async def debt_add(message: types.Message):
 
 @dp.message(F.text.startswith(("+", "-")))
 async def with_puree(message: types.Message):
-    _sp = message.text.split()
+    _sp = message.text.split(' ', 1)
     
     if len(_sp) > 1:
-        db.debtor = _sp[1] 
+        db.comment = _sp[1] 
         
     db.setSumm(_sp[0])
     summ = re.sub(r'(\+|-)', r'', _sp[0])   
@@ -103,18 +103,19 @@ async def with_puree(message: types.Message):
     db.user_ct_id = message.from_user.id
     if summ.isdigit() == False:
         await message.answer("Должно быть числом")
-    elif len(_sp) == 1:
-        await message.answer("Кому записываем долг?", reply_markup=debtor(db.getDebtorList(), parse_mode="HTML"))
-        if len(db.getDebtorList()) == 0:
-            await message.answer("Добавьте должника. Пример Сообщения '+100 Иван'")
+    # elif len(_sp) == 1:
+        # if len(db.getDebtorList()) == 0:
+        #     await message.answer("Добавьте должника. Пример Сообщения '+100 Иван'")
         # await message.answer(F"{db.getDebtorList()}")
     else:
-        if db.existsDebtor()[0] == 0:
-            old_summ = 0
-        else:
-            old_summ = db.getDebtorSumm()
-        db.debt()
-        await message.answer(f"{db.debtor}. Старый долг: {old_summ}.  Новый долг {db.getDebtorSumm()}")
+        await message.answer("Кому записываем долг?", reply_markup=debtor(db.getActiveDebtorList()))
+        
+        # if db.existsDebtor()[0] == 0:
+        #     old_summ = 0
+        # else:
+        #     old_summ = db.getDebtorSumm()
+        # db.debt()
+        # await message.answer(f"{db.debtor}. Старый долг: {old_summ}.  Новый долг {db.getDebtorSumm()}")
     
 # @dp.message(F.text.startswith("-") )
 # async def with_puree(message: types.Message):
@@ -125,45 +126,68 @@ def debtor(list, prefixs = 'add_debt_'):
     buttons = []
     for user in list:
         buttons.append([types.InlineKeyboardButton(text=f"{user[1]}", callback_data=f"{prefixs}{user[0]}")])
+        
+    buttons.append([types.InlineKeyboardButton(text=f"Отмена", callback_data=f"cancel")])
     keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard
 
 @dp.callback_query(F.data.startswith("add_debt"))
 async def callbacks_num(callback: types.CallbackQuery):
-    # print(callback)
     id_debtor = callback.data.split("_")[2]
     db.id = id_debtor
     db.debtor = db.getDebetorById()[1]
     old_summ = db.getDebtorSumm()
-    # print(db.getDebetorById()[1])
     db.debt()
     
-    await callback.message.edit_text(f"{db.debtor}. Старый долг: {old_summ}.  Новый долг {db.getDebtorSumm()}")
+    string = getListDebtForDebtor()
+    
+    await callback.message.edit_text(string)
+    # await callback.answer()
+
+@dp.callback_query(F.data.startswith("cancel"))
+async def callbacks_num(callback: types.CallbackQuery):
+    await callback.message.edit_text(f"Отмена")
     await callback.answer()
+
+def format_comment(comment, max_line_length):
+    ACC_length = 0
+    words = comment.split(" ")
+    formatted_comment = ""
+    for word in words:
+        if ACC_length + (len(word) + 1) <= max_line_length:
+            formatted_comment = formatted_comment + word + " "
+            ACC_length = ACC_length + len(word) + 1
+        else:
+            formatted_comment = formatted_comment + "\n" + word + " "
+            ACC_length = len(word) + 1
+    return formatted_comment
+
 
 @dp.callback_query(F.data.startswith("list_debt_"))
 async def callbacks_num(callback: types.CallbackQuery):
-    
     id_debtor = callback.data.split("_")[2]
     db.id = id_debtor
-    db.debtor = db.getDebetorById()[1]
+    string = getListDebtForDebtor()
+    await callback.message.edit_text(string)
+
+def getListDebtForDebtor():
+    _debtor = db.getDebetorById()
+    db.debtor = _debtor[1]
     debts = db.getDebtorHistoryList()
-    
+
+    string = ''    
     if debts:
-        string = f"{html.bold(html.quote(db.debtor))} \n"
+        string = html.bold(f'{db.debtor}. Общая сумма долга: {_debtor[2]} \n')
         for debt in debts:
-            price = f"{str(debt[3])} руб"
-            date = str(debt[4][0:10]).ljust(15)
-            string = f"{string}{date}  {price} \n"
+            string = f"{string} {debt[4][0:10]}  |  {debt[3]}руб  |  {str(debt[6])} \n"
     else:
         string = 'пусто'
-    
-    await callback.message.edit_text(f"{string}")
-    await callback.answer(parse_mode="HTML")
-    
+    return string
+
+
 @dp.message(F.text.lower() == "узнать долги")
 async def with_puree(message: types.Message):
-    await message.answer("Кому записываем долг?", reply_markup=debtor(db.getDebtorList(), "list_debt_"))
+    await message.answer("Кому записываем долг?", reply_markup=debtor(db.getActiveDebtorList(), "list_debt_"))
 
 
 @dp.message(F.text.lower() == "без пюрешки")
@@ -178,11 +202,14 @@ async def without_puree(message: types.Message):
 @dp.message(F.text)
 async def extract_data(message: types.Message):
     text = "Привет. Вот какие команды у меня есть:"
+    row1 = f"{html.bold('debt ')} {html.italic('[name]')}"
+    row2 = f"{html.bold('+')}{html.italic('[price] [comment]')}"
+    row3= f"{html.bold('-')}{html.italic('[price] [comment]')}"
     await message.answer(
         f"{html.bold(text)}\n"
-        f"{html.bold('debt ')} {html.italic('[name]')} - добавляем должника \n"
-        f"{html.bold('+')}{html.italic('[price] [comment]')} - добавляем дол \n"
-        f"{html.bold('-')}{html.italic('[price] [comment]')} - уменьшаем долг \n"
+        f"{row1.ljust(50)} добавляем должника \n"
+        f"{row2.ljust(50)} добавляем дол \n"
+        f"{row3.ljust(50)} уменьшаем долг \n"
     )
     # data = {
     #     "url": "<N/A>",
