@@ -2,23 +2,20 @@
 # -*- coding: utf-8 -*-
 
 import asyncio, os, logging
-from aiogram import Bot, Dispatcher, types
+from aiogram import Bot, Dispatcher, types, F, html
 from aiogram.filters.command import Command
 from aiogram.filters import CommandObject
-from aiogram import html
-from datetime import datetime
-from aiogram import F
-# from aiogram.utils.keyboard import InlineKeyboardBuilder
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-import random
-from contextlib import suppress
-from aiogram.exceptions import TelegramBadRequest
-import re
 from base import DataBase
-from tabulate import tabulate
-import prettytable as pt
-import settings
+import re
 from pathlib import Path
+import settings
+# from datetime import datetime
+# from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+# from aiogram.exceptions import TelegramBadRequest
+# from contextlib import suppress
+# import random
+# import prettytable as pt
+# from tabulate import tabulate
 
 # Включаем логирование, чтобы не пропустить важные сообщения
 logging.basicConfig(level=logging.INFO)
