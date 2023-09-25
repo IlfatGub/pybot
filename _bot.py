@@ -18,7 +18,7 @@ from base import DataBase
 from tabulate import tabulate
 import prettytable as pt
 import settings
-
+from pathlib import Path
 
 # Включаем логирование, чтобы не пропустить важные сообщения
 logging.basicConfig(level=logging.INFO)
@@ -27,7 +27,11 @@ bot = Bot(token=settings.BOT_TOKEN, parse_mode="HTML")
 # Диспетчер
 dp = Dispatcher()
 
-db = DataBase("my_database.db")
+if Path(settings.db_file).is_file() == False:
+    db = DataBase(settings.db_file)
+    db.createTableDebtor()
+else:
+    db = DataBase(settings.db_file)
 
 
 @dp.message(Command("name"))
@@ -145,7 +149,7 @@ def getListDebtForDebtor():
 
 @dp.message(F.text.lower() == "узнать долги")
 async def with_puree(message: types.Message):
-    await message.answer("Кому записываем долг?", reply_markup=debtor(db.getActiveDebtorList(), "list_debt_"))
+    await message.answer("Список должников", reply_markup=debtor(db.getActiveDebtorList(), "list_debt_"))
 
 @dp.message(F.text)
 async def extract_data(message: types.Message):

@@ -1,8 +1,0 @@
-https://www.andreyolegovich.ru/code/python/issues/ssl_module_is_not_available.php
-https://infozone.pro/python-telegram-chat-bot-docker-compose-dockerfile-instruction-guide/
-
-pip install --force-reinstall -v "aiogram==2.23.1"
-
-
-https://mastergroosha.github.io/aiogram-3-guide/quickstart/
-https://victor-komlev.ru/upravlenie-soobshheniyami-v-bote-telegram/
