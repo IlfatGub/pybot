@@ -178,7 +178,8 @@ class DataBase(object):
        return self.query_select('SELECT id, name FROM debtor')
    
     def getActiveDebtorList(self):
-       return self.query_select('SELECT id, name FROM debtor WHERE active = 1')
+    #    return self.query_select('SELECT id, name FROM debtor WHERE active = 1')
+       return self.query_select('SELECT id, name FROM debtor')
 
     def getDebtorHistoryList(self):
        return self.query_select('SELECT * FROM debtor_history WHERE debtor_id = ? ORDER BY date_ct DESC LIMIT 5', (self.id, ))
