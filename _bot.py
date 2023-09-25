@@ -1,14 +1,12 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import asyncio, os, logging
+import asyncio, os, logging, re, settings
 from aiogram import Bot, Dispatcher, types, F, html
 from aiogram.filters.command import Command
 from aiogram.filters import CommandObject
 from base import DataBase
-import re
 from pathlib import Path
-import settings
 # from datetime import datetime
 # from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 # from aiogram.exceptions import TelegramBadRequest
