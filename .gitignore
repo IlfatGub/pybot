@@ -1,4 +1,4 @@
-/.env
-base.py
+/python/.env
 __pycache__
-gubfamily.db
+/python/__pycache__
+/python/gubfamily.db

@@ -1,9 +1,10 @@
 
 version: '3.5'
 services:
-  webapp:
+  pybot:
     image: pybot
-    # ports:
-    #   - "8000:8000"
-    # volumes:
-    #   - "/data"
+    ports:
+      - "8000:8000"
+    command: python ./server.py
+    volumes:
+      - ./python:./
