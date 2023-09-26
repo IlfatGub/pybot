@@ -5,6 +5,6 @@ services:
     image: pybot
     ports:
       - "8000:8000"
-    command: python ./server.py
+    command: python ./_bot.py
     volumes:
       - /opt/py/python/:/usr/src/app/:ro
