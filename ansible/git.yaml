@@ -1,0 +1,5 @@
+- name: Git checkout
+  ansible.builtin.git:
+    repo: 'https://github.com/IlfatGub/pybot.git'
+    dest: /opt/
+    version: main
