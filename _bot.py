@@ -15,6 +15,7 @@ from pathlib import Path
 # import prettytable as pt
 # from tabulate import tabulate
 
+
 # Включаем логирование, чтобы не пропустить важные сообщения
 logging.basicConfig(level=logging.INFO)
 # Объект бота
@@ -39,8 +40,14 @@ async def cmd_name(message: types.Message, command: CommandObject):
 # Хэндлер на команду /start
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message):
-    kb = [[types.KeyboardButton(text="Узнать долги", callback_data="find_out_debts")], ]
-    keyboard = types.ReplyKeyboardMarkup( keyboard=kb, )
+    kb = [
+        [types.KeyboardButton(text="Узнать долги", callback_data="find_out_debts")],
+        [types.KeyboardButton(text="Удалить должника", callback_data="remove_the_debtor")],
+     ]
+    keyboard = types.ReplyKeyboardMarkup(
+            keyboard=kb, 
+            resize_keyboard=True,
+        )
     await message.answer("-", reply_markup=keyboard)
 
 # Хэндлер на команду /start
@@ -86,6 +93,7 @@ def debtor(list, prefixs = 'add_debt_'):
     return keyboard
 
 @dp.callback_query(F.data.startswith("add_debt"))
+
 async def callbacks_num(callback: types.CallbackQuery):
     id_debtor = callback.data.split("_")[2]
     db.id = id_debtor
@@ -99,6 +107,7 @@ async def callbacks_num(callback: types.CallbackQuery):
     # await callback.answer()
 
 @dp.callback_query(F.data.startswith("cancel"))
+
 async def callbacks_num(callback: types.CallbackQuery):
     await callback.message.edit_text(f"Отмена")
     await callback.answer()
@@ -118,6 +127,7 @@ def format_comment(comment, max_line_length):
 
 
 @dp.callback_query(F.data.startswith("list_debt_"))
+
 async def callbacks_num(callback: types.CallbackQuery):
     id_debtor = callback.data.split("_")[2]
     db.id = id_debtor
@@ -142,6 +152,17 @@ def getListDebtForDebtor():
     return string
 
 
+@dp.callback_query(F.data.startswith("dell_debt_"))
+
+async def callbacks_num(callback: types.CallbackQuery):
+    id_debtor = callback.data.split("_")[2]
+    db.id = id_debtor
+    await callback.message.edit_text('Ok')
+
+@dp.message(F.text.lower() == "удалить должника")
+async def with_puree(message: types.Message):
+    await message.answer("Список должников", reply_markup=debtor(db.getActiveDebtorList(), "dell_debt_"))
+     
 @dp.message(F.text.lower() == "узнать долги")
 async def with_puree(message: types.Message):
     await message.answer("Список должников", reply_markup=debtor(db.getActiveDebtorList(), "list_debt_"))

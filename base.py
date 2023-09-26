@@ -130,14 +130,17 @@ class DataBase(object):
         else:
             self.query('UPDATE debtor SET active = 1 WHERE name = ?', [self.debtor])
 
+    def setActiveDebtor(self):
+        self.query('UPDATE debtor SET active = 0 WHERE id = ?', [self.id,])
+        
     def addDebtDebtor(self):
         if self.summ[0] == '+':
             self.query('UPDATE debtor SET summ = summ + ? WHERE name = ?' , [self.summ[1:], self.debtor])
         else:
             self.query('UPDATE debtor SET summ = summ - ? WHERE name = ?' , [self.summ[1:], self.debtor])
 
-        if self.query_select('SELECT * FROM debtor WHERE id = ?', (self.id,))[0][2] == 0:
-            self.query('UPDATE debtor SET active = 0 WHERE id = ?', [self.id,])
+        # if self.query_select('SELECT * FROM debtor WHERE id = ?', (self.id,))[0][2] == 0:
+            # self.query('UPDATE debtor SET active = 0 WHERE id = ?', [self.id,])
         
     def addDebtDebtorHistory(self):
         res = self.query_select('SELECT id, summ FROM debtor WHERE name = ?', [self.debtor])
@@ -147,22 +150,6 @@ class DataBase(object):
             )
         self.comment = None
         
-    # def addDebtDebtorHistory(self, debtor, summ):
-    #     conn = self.connect()
-    #     cursor = conn.cursor()
-    #     cursor.execute('INSERT INTO debtor (user_ct_id, summ) VALUES (?, ?)', (debtor, summ))
-    #     self.commit_close(conn)
-    #     cursor.execute('''
-    #     CREATE TABLE IF NOT EXISTS debtor_history (
-    #     id INTEGER PRIMARY KEY,
-    #     user_ct_id INTEGER NOT NULL,
-    #     debtor_id INTEGER NOT NULL,
-    #     summ INTEGER NOT NULL,
-    #     datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    #     total_summ INTEGER NOT NULL
-    #     )
-    #     ''')
-
     def getDebtorSumm(self):
         # print(self.debtor)
         # print(self.summ)
@@ -178,8 +165,8 @@ class DataBase(object):
        return self.query_select('SELECT id, name FROM debtor')
    
     def getActiveDebtorList(self):
-    #    return self.query_select('SELECT id, name FROM debtor WHERE active = 1')
-       return self.query_select('SELECT id, name FROM debtor')
+       return self.query_select('SELECT id, name FROM debtor WHERE active = 1')
+    #    return self.query_select('SELECT id, name FROM debtor')
 
     def getDebtorHistoryList(self):
        return self.query_select('SELECT * FROM debtor_history WHERE debtor_id = ? ORDER BY date_ct DESC LIMIT 5', (self.id, ))
