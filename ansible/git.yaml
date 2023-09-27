@@ -19,4 +19,4 @@
     args:
       chdir: "{{dir_bot}}"
   - name: Docker run
-    shell: "/usr/bin/docker run  {{docker_image}}"
+    shell: "/usr/bin/docker run {{docker_image}}"
