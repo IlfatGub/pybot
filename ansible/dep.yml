@@ -10,17 +10,10 @@
 
   tasks:
   - name: Stop a container
-    community.docker.docker_container:
+    docker_container:
       name: "{{docker_image}}"
       state: stopped
 
-  - name: Delete  docker containers
-    docker_container:
-      name: "{{docker_image}}"
-      force_kill: true
-      keep_volumes: false
-      state: absent
-    
   - name: Git checkout
     ansible.builtin.git:
       repo: 'https://github.com/IlfatGub/pybot.git'
@@ -31,6 +24,6 @@
     shell: "docker build -t {{docker_image}} ."
     args:
       chdir: "{{dir_bot}}"
-      
+
   - name: Docker run
     shell: "docker run -d --mount type=bind,src=/opt/py/python,target=/usr/src/app {{docker_image}}"
