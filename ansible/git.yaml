@@ -1,5 +1,21 @@
-- name: Git checkout
-  ansible.builtin.git:
-    repo: 'https://github.com/IlfatGub/pybot.git'
-    dest: /opt/
-    version: main
+---
+- name: Deploy
+  hosts: all
+
+  vars: 
+    dir: /opt/
+    dir_bot: /opt/pyd
+    docker_image: /opt/pyd
+    
+  tasks:
+  - name: Git checkout
+    ansible.builtin.git:
+      repo: 'https://github.com/IlfatGub/pybot.git'
+      dest: "{{dir_bot}}"
+      version: main
+  - name: Docker build
+    shell: "/usr/bin/docker build -t {{docker_image}} ."
+    args:
+      chdir: "{{dir_bot}}"
+  - name: Docker run
+    shell: "/usr/bin/docker run  {{docker_image}} ."
