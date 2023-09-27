@@ -6,6 +6,6 @@ services:
     user: root
     ports:
       - "8000:8000"
-    command: python ./_bot.py
+    command: python /usr/src/app/_bot.py
     volumes:
       - /opt/py/python/:/usr/src/app/:ro
