@@ -9,6 +9,11 @@
     docker_image: pybots
 
   tasks:
+  - name: docker python
+    pip:
+      name: docker
+      state: latest
+
   - name: Stop a container
     docker_container:
       name: "{{docker_image}}"
