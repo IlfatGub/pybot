@@ -5,7 +5,7 @@
   vars: 
     dir: /opt/
     dir_bot: /opt/py
-    docker_image: pybot
+    docker_image: pybots
 
   tasks:
   - name: Git checkout
