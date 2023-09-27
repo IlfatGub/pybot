@@ -19,14 +19,11 @@
       name: "{{docker_image}}"
     register: result
   
-  - name: Debug
-    debug:
-      var: result
-
   - name: Stop a container
     docker_container:
       name: "{{docker_image}}"
       state: stopped
+    when: result.exists
 
   # - name: Stop a container
   #   docker_container:
@@ -45,4 +42,4 @@
       chdir: "{{dir_bot}}"
 
   - name: Docker run
-    shell: "docker run -d --rm --mount={{docker_image}} type=bind,src=/opt/py/python,target=/usr/src/app {{docker_image}}"
+    shell: "docker run --rm --mount={{docker_image}} -d type=bind,src=/opt/py/python,target=/usr/src/app {{docker_image}}"
