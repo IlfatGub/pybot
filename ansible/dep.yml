@@ -10,8 +10,8 @@
 
   tasks:
   - name: docker python
-    pip:
-      name: docker
+    yum:
+      name: python-docker
       state: latest
 
   - name: Stop a container
