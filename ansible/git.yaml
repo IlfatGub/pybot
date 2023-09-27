@@ -13,6 +13,7 @@
     ansible.builtin.git:
       repo: 'https://github.com/IlfatGub/pybot.git'
       dest: "{{dir_bot}}"
+      force: yes
   - name: Docker build
     shell: "/usr/bin/docker build -t {{docker_image}} ."
     args:
