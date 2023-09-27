@@ -1,6 +1,7 @@
 ---
 - name: Deploy
   hosts: all
+  become: true
 
   vars: 
     dir: /opt/
