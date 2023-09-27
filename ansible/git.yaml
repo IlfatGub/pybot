@@ -4,9 +4,9 @@
 
   vars: 
     dir: /opt/
-    dir_bot: /opt/pyd
-    docker_image: /opt/pyd
-    
+    dir_bot: /opt/py
+    docker_image: pybot
+
   tasks:
   - name: Git checkout
     ansible.builtin.git:
