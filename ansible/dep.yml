@@ -14,6 +14,15 @@
       name: python-docker
       state: latest
 
+  - name: "check {{docker_image}} container"
+    docker_container_info:
+      name: "{{docker_image}}"
+    register: result
+  
+  - name: Debug
+    debug:
+      var: result
+
   - name: Stop a container
     docker_container:
       name: "{{docker_image}}"
