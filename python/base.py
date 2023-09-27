@@ -56,9 +56,8 @@ class DataBase(object):
         return cursor.fetchall()
 
     def dropTable(self):
-        print("sd")
-        # print(self.query('DROP TABLE debtor', []).rowcount)
-        # print(self.query('DROP TABLE debtor_history', []).rowcount)
+        self.query('DROP TABLE debtor', []).rowcount
+        self.query('DROP TABLE debtor_history', []).rowcount
 
     def createTableDebtor(self):
         conn = self.connect()
@@ -149,6 +148,7 @@ class DataBase(object):
             [self.user_ct_id, res[0][0], self.summ,  res[0][1], self.comment]
             )
         self.comment = None
+        self.summ = None
         
     def getDebtorSumm(self):
         # print(self.debtor)

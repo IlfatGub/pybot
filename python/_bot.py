@@ -55,11 +55,11 @@ async def cmd_start(message: types.Message):
 async def cmd_start(message: types.Message):
     db.dropTable()
     db.createTableDebtor()
-    # await message.answer("Таблицы очищены")
+    await message.answer("Таблицы очищены")
 
 @dp.message(F.text.startswith("!"))
 async def debt_add(message: types.Message):
-    res = message.text.split()
+    res = message.text.split(' ', 1)
     if len(res) == 1:
         await message.answer(f"Надо указать должника")
     else:
@@ -153,10 +153,10 @@ def getListDebtForDebtor():
 
 
 @dp.callback_query(F.data.startswith("dell_debt_"))
-
 async def callbacks_num(callback: types.CallbackQuery):
     id_debtor = callback.data.split("_")[2]
     db.id = id_debtor
+    db.setActiveDebtor()
     await callback.message.edit_text('Ok')
 
 @dp.message(F.text.lower() == "удалить должника")
